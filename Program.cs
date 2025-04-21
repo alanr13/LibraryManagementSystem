@@ -2,42 +2,45 @@
 
 Library library = new Library();
 
-Console.WriteLine("What books, would you add to the library?\n");
+Console.WriteLine("What books, would you add to the library?");
 for (;;)
 {
     string? title = Console.ReadLine();
     if (title != null)
-        library.AddBooks(title);
+        library.Books.Add(new Book(title));
     if (title == "x")
         break;
 }
 
-Console.WriteLine("What is your name?\n");
+Console.WriteLine("What is your name?");
 string? name = Console.ReadLine();
 Member member = new Member(name);
 Console.Clear();
 
 while (true)
 {
-    Console.WriteLine("What would you like to do?");
+    Console.WriteLine("\nWhat would you like to do?");
     Console.WriteLine("1. Borrow book");
     Console.WriteLine("2. Return book");
     Console.WriteLine("3. View available books");
     Console.WriteLine("4. View borrowed books");
     Console.WriteLine("5. Exit");
     char input = Console.ReadKey().KeyChar;
+    Console.WriteLine("\n");
 
     switch (input)
     {
         case '1':
             Console.WriteLine("What a book would you like to borrow?");
-            string title = Console.ReadLine();
-            library.BorrowBook(title, member);
+            string? title = Console.ReadLine();
+            if (title != null)
+                library.BorrowBook(title, member);
             break;
         case '2':
             Console.WriteLine("What book would you like to return?");
             title = Console.ReadLine();
-            library.ReturnBook(title, member);
+            if(title != null)
+                library.ReturnBook(title, member);
             break;
         case '3':
             library.ViewAvailableBooks();
@@ -52,6 +55,7 @@ while (true)
             break;
     }
 }
+
 class Book
 {
     public string? Title { get; set; }
@@ -91,11 +95,12 @@ class Member
 
     public void RemoveBorrowedBook(string title)
     {
-        foreach (Book book in BorrowedBooks)
+        foreach (Book book in BorrowedBooks.ToList())
         {
             if (book.Title == title)
             {
                 BorrowedBooks.Remove(book);
+                break;
             }
         }
     }
@@ -107,25 +112,21 @@ class Library
 
     public void ViewAvailableBooks()
     {
-        foreach (Book book in Books)
+        foreach (Book book in Books.ToList())
         {
             Console.WriteLine($"{book.Title}");
         }
     }
 
-    public void AddBooks(string title)
-    {
-        Books.Add(new Book(title));
-    }
-
     public void BorrowBook(string title, Member member)
     {
-        foreach (Book book in Books)
+        foreach (Book book in Books.ToList())
         {
             if (book.Title == title)
             {
                 member.AddBorrowedBooks(title);
                 Books.Remove(book);
+                break;
             }
         }
     }
@@ -136,8 +137,9 @@ class Library
         {
             if (book.Title == title)
             {
-                AddBooks(title);
+                Books.Add(book);
                 member.RemoveBorrowedBook(title);
+                break;
             }
         }
     }
