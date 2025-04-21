@@ -40,7 +40,7 @@ while (true)
             Console.WriteLine("What book would you like to return?");
             title = Console.ReadLine();
             if(title != null)
-                library.ReturnBook(title, member);
+                member.ReturnBook(title, member, library.Books);
             break;
         case '3':
             library.ViewAvailableBooks();
@@ -49,7 +49,7 @@ while (true)
             member.ViewBorrowedBooks();
             break;
         case '5':
-            Environment.ExitCode = 0;
+            Environment.Exit(0);
             break;
         default:
             break;
@@ -88,18 +88,18 @@ class Member
         }
     }
 
-    public void AddBorrowedBooks(string title)
-    {
-        BorrowedBooks.Add(new Book(title));
-    }
+    public void AddBorrowedBooks(string title) => BorrowedBooks.Add(new Book(title));
 
-    public void RemoveBorrowedBook(string title)
+    public void RemoveBorrowedBook(Book book) => BorrowedBooks.Remove(book);
+
+    public void ReturnBook(string title, Member member, List<Book> books)
     {
-        foreach (Book book in BorrowedBooks.ToList())
+        foreach (Book book in BorrowedBooks)
         {
             if (book.Title == title)
             {
-                BorrowedBooks.Remove(book);
+                books.Add(book);
+                member.RemoveBorrowedBook(book);
                 break;
             }
         }
@@ -131,18 +131,7 @@ class Library
         }
     }
 
-    public void ReturnBook(string title, Member member)
-    {
-        foreach (Book book in Books)
-        {
-            if (book.Title == title)
-            {
-                Books.Add(book);
-                member.RemoveBorrowedBook(title);
-                break;
-            }
-        }
-    }
+    public void AddBooks(string title) => Books.Add(new Book(title));
 }
 
 //class DigitalBook : Book
