@@ -7,7 +7,7 @@ for (;;)
 {
     string? title = Console.ReadLine();
     if (title != null)
-        library.Books.Add(new Book(title));
+        library.AddBooks(new Book(title));
     if (title == "x")
         break;
 }
@@ -40,7 +40,7 @@ while (true)
             Console.WriteLine("What book would you like to return?");
             title = Console.ReadLine();
             if(title != null)
-                member.ReturnBook(title, member, library.Books);
+                member.ReturnBook(title, member, library);
             break;
         case '3':
             library.ViewAvailableBooks();
@@ -56,28 +56,39 @@ while (true)
     }
 }
 
-class Book
-{
-    public string? Title { get; set; }
+class Book{
+    private string? title;
+
+    public string? Title
+    {
+        get => title;
+        set => title = value;
+    }
 
     public Book(string title)
     {
-        Title = title;
+        this.title = title;
     }
 }
 
 class Member
 {
-    public string? Name { get; private set; }
+    private string? name;
+
+    public string? Name
+    {
+        get => name;
+        set => name = value;
+    }
     private List<Book> BorrowedBooks { get; } = new List<Book>();
     public Member(string? name)
     {
-        Name = name;
+        this.name = name;
     }
 
     public void ChangeName(string name)
     { 
-        Name = name;
+        this.name = name;
     }
 
     public void ViewBorrowedBooks()
@@ -88,17 +99,17 @@ class Member
         }
     }
 
-    public void AddBorrowedBooks(string title) => BorrowedBooks.Add(new Book(title));
+    public void AddBorrowedBooks(Book book) => BorrowedBooks.Add(book);
 
     public void RemoveBorrowedBook(Book book) => BorrowedBooks.Remove(book);
 
-    public void ReturnBook(string title, Member member, List<Book> books)
+    public void ReturnBook(string title, Member member, Library library)
     {
         foreach (Book book in BorrowedBooks)
         {
             if (book.Title == title)
             {
-                books.Add(book);
+                library.AddBooks(book);
                 member.RemoveBorrowedBook(book);
                 break;
             }
@@ -108,7 +119,7 @@ class Member
 
 class Library
 {
-    public List<Book> Books { get; set; } = new List<Book>();
+    private List<Book> Books { get; set; } = new List<Book>();
 
     public void ViewAvailableBooks()
     {
@@ -124,28 +135,20 @@ class Library
         {
             if (book.Title == title)
             {
-                member.AddBorrowedBooks(title);
+                member.AddBorrowedBooks(book);
                 Books.Remove(book);
                 break;
             }
         }
     }
 
-    public void AddBooks(string title) => Books.Add(new Book(title));
+    public void AddBooks(Book book) => Books.Add(book);
 }
 
-//class DigitalBook : Book
-//{
-//    public DigitalBook(string title)
-//    {
-//        base.Title = title;
-//    }
-//}
+class DigitalBook : Book
+{
+}
 
-//class PhysicalBook : Book
-//{
-//    public PhysicalBook(string title)
-//    {
-//        base.Title = title;
-//    }
-//}
+class PhysicalBook : Book
+{
+}
