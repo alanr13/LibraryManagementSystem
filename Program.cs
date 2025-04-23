@@ -2,15 +2,26 @@
 
 Library library = new Library();
 
-Console.WriteLine("What books, would you add to the library?");
-for (;;)
-{
-    string? title = Console.ReadLine();
-    if (title != null)
-        library.AddBooks(new Book(title));
-    if (title == "x")
-        break;
-}
+library.AddBooks(new PhysicalBook("One Piece"));
+library.AddBooks(new PhysicalBook("Naruto"));
+library.AddBooks(new DigitalBook("The Witcher"));
+library.AddBooks(new DigitalBook("Game of Thrones"));
+library.AddBooks(new PhysicalBook("Berserk"));
+library.AddBooks(new PhysicalBook("Programming Book"));
+library.AddBooks(new DigitalBook("Dragon Ball"));
+library.AddBooks(new DigitalBook("Claymore"));
+library.AddBooks(new PhysicalBook("Self-improvement book"));
+library.AddBooks(new PhysicalBook("Cooking book"));
+
+//Console.WriteLine("What books, would you add to the library?");
+//for (;;)
+//{
+//    string? title = Console.ReadLine();
+//    if (title != null)
+//        library.AddBooks(new Book(title));
+//    if (title == "x")
+//        break;
+//}
 
 Console.WriteLine("What is your name?");
 string? name = Console.ReadLine();
@@ -56,7 +67,7 @@ while (true)
     }
 }
 
-class Book{
+abstract class Book{
     private string? title;
 
     public string? Title
@@ -147,8 +158,16 @@ class Library
 
 class DigitalBook : Book
 {
+    public DigitalBook(string title) : base(title)
+    {
+
+    }
 }
 
 class PhysicalBook : Book
 {
+    public PhysicalBook(string title) : base(title)
+    {
+
+    }
 }
