@@ -1,4 +1,6 @@
-﻿Library library = new Library();
+﻿using static System.Reflection.Metadata.BlobBuilder;
+
+Library library = new Library();
 
 library.AddBooks(new PhysicalBook("One Piece"));
 library.AddBooks(new PhysicalBook("Naruto"));
@@ -14,7 +16,6 @@ library.AddBooks(new PhysicalBook("Cooking book"));
 Console.WriteLine("What is your name?");
 string? name = Console.ReadLine();
 Member member = new Member(name);
-Thread.Sleep(3000);
 Console.Clear();
 
 while (true)
@@ -36,18 +37,20 @@ while (true)
             {
                 Console.WriteLine("What a book would you like to borrow?");
                 string? title = Console.ReadLine();
+
+                if (title != null)
+                {
+                    if (!library.HasBook(title))
+                        Console.WriteLine("There is no such book.");
+                    library.BorrowBook(title, member);
+                    break;
+                }
+
                 if (library.GetBooks().Count == 0)
                 {
                     Console.WriteLine("There are no books in library to borrow.");
                     break;
                 }
-                if (title != null)
-                {
-                    library.BorrowBook(title, member);
-                    break;
-                }
-                else if (String.IsNullOrEmpty(title))
-                    Console.WriteLine("Try again.");
             }
             break;
         case '2':
@@ -56,19 +59,19 @@ while (true)
                 Console.WriteLine("What book would you like to return?");
                 string? title = Console.ReadLine();
 
+                if (title != null)
+                {
+                    if (!member.HasBook(title))
+                        Console.WriteLine("You can't return a book that you don't have.");
+                    member.ReturnBook(title, member, library);
+                    break;
+                }
+
                 if (member.GetBooks().Count == 0)
                 {
                     Console.WriteLine("You haven't borrowed any books, so you can return anything.");
                     break;
                 }
-
-                if (title != null)
-                {
-                    member.ReturnBook(title, member, library);
-                    break;
-                }
-                else if (String.IsNullOrEmpty(title))
-                    Console.WriteLine("Try again.");
             }
             break;
         case '3':
@@ -144,6 +147,19 @@ class Member
             }
         }
     }
+
+    public bool HasBook(string title)
+    {
+        foreach (Book book in BorrowedBooks.ToList())
+        {
+            if (book.Title == title)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 class Library
@@ -177,6 +193,19 @@ class Library
     }
 
     public void AddBooks(Book book) => Books.Add(book);
+
+    public bool HasBook(string title)
+    {
+        foreach (Book book in Books.ToList())
+        {
+            if(book.Title == title)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 abstract class Book
