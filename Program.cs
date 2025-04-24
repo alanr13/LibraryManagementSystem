@@ -1,6 +1,4 @@
-﻿using static System.Reflection.Metadata.BlobBuilder;
-
-Library library = new Library();
+﻿Library library = new Library();
 
 library.AddBooks(new PhysicalBook("One Piece"));
 library.AddBooks(new PhysicalBook("Naruto"));
@@ -13,19 +11,10 @@ library.AddBooks(new DigitalBook("Claymore"));
 library.AddBooks(new PhysicalBook("Self-improvement book"));
 library.AddBooks(new PhysicalBook("Cooking book"));
 
-//Console.WriteLine("What books, would you add to the library?");
-//for (;;)
-//{
-//    string? title = Console.ReadLine();
-//    if (title != null)
-//        library.AddBooks(new Book(title));
-//    if (title == "x")
-//        break;
-//}
-
 Console.WriteLine("What is your name?");
 string? name = Console.ReadLine();
 Member member = new Member(name);
+Thread.Sleep(3000);
 Console.Clear();
 
 while (true)
@@ -43,16 +32,44 @@ while (true)
     switch (input)
     {
         case '1':
-            Console.WriteLine("What a book would you like to borrow?");
-            string? title = Console.ReadLine();
-            if (title != null)
-                library.BorrowBook(title, member);
+            while (true)
+            {
+                Console.WriteLine("What a book would you like to borrow?");
+                string? title = Console.ReadLine();
+                if (library.GetBooks().Count == 0)
+                {
+                    Console.WriteLine("There are no books in library to borrow.");
+                    break;
+                }
+                if (title != null)
+                {
+                    library.BorrowBook(title, member);
+                    break;
+                }
+                else if (String.IsNullOrEmpty(title))
+                    Console.WriteLine("Try again.");
+            }
             break;
         case '2':
-            Console.WriteLine("What book would you like to return?");
-            title = Console.ReadLine();
-            if(title != null)
-                member.ReturnBook(title, member, library);
+            while (true)
+            {
+                Console.WriteLine("What book would you like to return?");
+                string? title = Console.ReadLine();
+
+                if (member.GetBooks().Count == 0)
+                {
+                    Console.WriteLine("You haven't borrowed any books, so you can return anything.");
+                    break;
+                }
+
+                if (title != null)
+                {
+                    member.ReturnBook(title, member, library);
+                    break;
+                }
+                else if (String.IsNullOrEmpty(title))
+                    Console.WriteLine("Try again.");
+            }
             break;
         case '3':
             library.ViewAvailableBooks();
@@ -76,12 +93,26 @@ class Member
     public string? Name
     {
         get => name;
-        set => name = value;
+        set
+        {
+            if (value != null)
+                name = value.ToUpper();
+            else
+            {
+                name = null;
+                Console.WriteLine("Name is null");
+            }
+        }
     }
     private List<Book> BorrowedBooks { get; } = new List<Book>();
     public Member(string? name)
     {
         this.name = name;
+    }
+
+    public List<Book> GetBooks()
+    {
+        return BorrowedBooks;
     }
 
     public void ChangeName(string name)
@@ -127,6 +158,11 @@ class Library
         }
     }
 
+    public List<Book> GetBooks()
+    { 
+        return Books; 
+    }
+
     public void BorrowBook(string title, Member member)
     {
         foreach (Book book in Books.ToList())
@@ -150,7 +186,20 @@ abstract class Book
     public string? Title
     {
         get => title;
-        set => title = value;
+        set
+        {
+            if (title != null)
+            {
+                if (title.Length < 300)
+                {
+                    title = value;
+                }
+                else
+                {
+                    title = "Error";
+                }
+            }
+        }
     }
 
     public Book(string title)
