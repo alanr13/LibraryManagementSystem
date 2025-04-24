@@ -35,7 +35,8 @@ while (true)
     Console.WriteLine("2. Return book");
     Console.WriteLine("3. View available books");
     Console.WriteLine("4. View borrowed books");
-    Console.WriteLine("5. Exit");
+    Console.WriteLine("5. Read book description");
+    Console.WriteLine("6. Exit");
     char input = Console.ReadKey().KeyChar;
     Console.WriteLine("\n");
 
@@ -60,25 +61,11 @@ while (true)
             member.ViewBorrowedBooks();
             break;
         case '5':
-            Environment.Exit(0);
+            
             break;
         default:
+            Console.WriteLine("I don't know about such a command.");
             break;
-    }
-}
-
-abstract class Book{
-    private string? title;
-
-    public string? Title
-    {
-        get => title;
-        set => title = value;
-    }
-
-    public Book(string title)
-    {
-        this.title = title;
     }
 }
 
@@ -156,11 +143,34 @@ class Library
     public void AddBooks(Book book) => Books.Add(book);
 }
 
+abstract class Book
+{
+    private string? title;
+
+    public string? Title
+    {
+        get => title;
+        set => title = value;
+    }
+
+    public Book(string title)
+    {
+        this.title = title;
+    }
+
+    public abstract void ReadDescription(Library library);
+}
+
 class DigitalBook : Book
 {
     public DigitalBook(string title) : base(title)
     {
 
+    }
+
+    public override void ReadDescription(Library library)
+    {
+        Console.WriteLine("Code: 3253532 blah, blah, blah");
     }
 }
 
@@ -169,5 +179,10 @@ class PhysicalBook : Book
     public PhysicalBook(string title) : base(title)
     {
 
+    }
+
+    public override void ReadDescription(Library library)
+    {
+        Console.WriteLine("blah, blah, blah");
     }
 }
